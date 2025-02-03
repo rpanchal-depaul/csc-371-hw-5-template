@@ -1,0 +1,139 @@
+name: Autograding Tests
+on:
+  push:
+    branches:
+      - main
+  repository_dispatch:
+    types: [test_result]
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: [self-hosted, macOS]
+    if: github.actor != 'github-classroom[bot]'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: buildProject
+      id: buildProject
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: buildProject
+        setup-command: ''
+        command: xcodebuild build -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5'
+        timeout: 60
+        max-score: 5
+
+    - name: testAllElementsExist
+      id: testAllElementsExist
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testAllElementsExist
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testAllElementsExist | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 10
+
+    - name: testDescriptionInputAllowsTextAndNumbers
+      id: testDescriptionInputAllowsTextAndNumbers
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testDescriptionInputAllowsTextAndNumbers
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testDescriptionInputAllowsTextAndNumbers | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 5
+
+    - name: testQuantityInputOnlyAllowsNumbers
+      id: testQuantityInputOnlyAllowsNumbers
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testQuantityInputOnlyAllowsNumbers
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testQuantityInputOnlyAllowsNumbers | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 5
+
+    - name: testInputValidationSequence01
+      id: testInputValidationSequence01
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testInputValidationSequence01
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testAllElemetestInputValidationSequence01ntsExist | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 10
+
+    - name: testInputValidationSequence02
+      id: testInputValidationSequence02
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testInputValidationSequence02
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testInputValidationSequence02 | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 10
+
+    - name: testInputSequence01
+      id: testInputSequence01
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testInputSequence01
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testInputSequence01 | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 10
+
+    - name: testInputSequence02
+      id: testInputSequence02
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testInputSequence02
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testInputSequence02 | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 10
+
+    - name: testInputSequence03
+      id: testInputSequence03
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testBasicAddtestInputSequence03Operation5
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testInputSequence03 | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 5
+
+    - name: testInputSequence04
+      id: testInputSequence04
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testInputSequence04
+        setup-command: ''
+        command: xcodebuild test -project HW5.xcodeproj -scheme HW5 -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max,OS=17.5' -only-testing:HW5UITests/HW5UITests/testInputSequence04 | grep -q "Executed 1 test, with 0 failures"
+        timeout: 60
+        max-score: 5
+
+    # Grading
+          
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        BUILDPROJECT_RESULTS: "${{steps.buildProject.outputs.result}}"
+        TESTALLELEMENTSEXIST_RESULTS: "${{steps.testAllElementsExist.outputs.result}}"
+        TESTDESCRIPTIONINPUTALLOWSTEXTANDNUMBERS_RESULTS: "${{steps.testDescriptionInputAllowsTextAndNumbers.outputs.result}}"
+        TESTQUANTITYINPUTONLYALLOWSNUMBERS_RESULTS: "${{steps.testQuantityInputOnlyAllowsNumbers.outputs.result}}"
+        TESTINPUTVALIDATIONSEQUENCE01_RESULTS: "${{steps.testInputValidationSequence01.outputs.result}}"
+        TESTINPUTVALIDATIONSEQUENCE02_RESULTS: "${{steps.testInputValidationSequence02.outputs.result}}"
+        TESTINPUTSEQUENCE01_RESULTS: "${{steps.testInputSequence01.outputs.result}}"
+        TESTINPUTSEQUENCE02_RESULTS: "${{steps.testInputSequence02.outputs.result}}"
+        TESTINPUTSEQUENCE03_RESULTS: "${{steps.testInputSequence03.outputs.result}}"
+        TESTINPUTSEQUENCE04_RESULTS: "${{steps.testInputSequence04.outputs.result}}"
+
+      with:
+        runners: buildProject,testAllElementsExist,testDescriptionInputAllowsTextAndNumbers,testQuantityInputOnlyAllowsNumbers,testInputValidationSequence01,testInputValidationSequence02,testInputSequence01,testInputSequence02,testInputSequence03,testInputSequence04
